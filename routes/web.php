@@ -26,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('admin.dashboard');
 
     Route::get('/admin/item', [ItemController::class, 'index'])->name('admin.item');
+    Route::post('/admin/item', [ItemController::class, 'store'])->name('admin.item');
 });
 
 Route::middleware('auth')->group(function () {
