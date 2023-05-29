@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,17 +20,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/admin', function() {
-    return view('admin.dashboard');
-});
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
 
-Route::get('/admin', function() {
-    return view('admin.dashboard');
+    Route::get('/admin/item', [ItemController::class, 'index'])->name('admin.item');
 });
-
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/admin/profile', [ProfileController::class, 'edit'])->name('profile.edit');
