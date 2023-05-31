@@ -18,6 +18,7 @@ require __DIR__.'/auth.php';
 
 Route::get('/', [ItemController::class, 'latest_3'])->name('user.home');
 Route::get('/item', [ItemController::class, 'user_item'])->name('user.item');
+Route::get('/item/{item}', [ItemController::class, 'show'])->name('user.item.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/dashboard', function () {
