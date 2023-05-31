@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Item extends Model
 {
     use HasFactory;
+    
+    protected $attributes = [
+        'image_location' => 'nil',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -17,6 +21,8 @@ class Item extends Model
     protected $fillable = [
         'name',
         'description',
+        'image_location',
+        'category',
         'stock',
         'price',
         'timestamps'

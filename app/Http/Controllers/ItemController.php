@@ -4,9 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
+    public function latest_3()
+    {
+        $itemsData = Item::paginate(3);
+        return view('store.home', [
+            'items' => $itemsData
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -14,6 +27,17 @@ class ItemController extends Controller
     {
         $itemsData = Item::all();
         return view('admin.item', [
+            'items' => $itemsData
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function user_item()
+    {
+        $itemsData = Item::all();
+        return view('store.item', [
             'items' => $itemsData
         ]);
     }
@@ -31,6 +55,7 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
+        // TODO: request verification
         $itemDTO = $request->collect();
         $itemData = new Item;
 
@@ -38,6 +63,13 @@ class ItemController extends Controller
         $itemData->description = $itemDTO->get('description');
         $itemData->stock = $itemDTO->get('stock');
         $itemData->price = $itemDTO->get('price');
+        $itemData->category = $itemDTO->get('category');
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->storePublicly('item_image');
+            $itemData->image_location = $path;
+        }
+
         $ok = $itemData->save();
 
         if (!$ok) {
@@ -68,7 +100,28 @@ class ItemController extends Controller
      */
     public function update(Request $request, Item $item)
     {
-        //
+        $reqDTO = $request->all();
+        foreach ($reqDTO as $key => $value) {
+            if ($value != null && $key != 'image') {
+                $item->update([$key => $value]);
+            }
+        }
+
+        if ($request->hasFile('image')) {
+            Storage::delete($item->image_location);
+            $success = $item->delete();
+            if (!$success) {
+                Log::withContext([
+                    'item' => $item,
+                ]);
+            }
+
+            $path = $request->file('image')->storePublicly('item_image');
+            $item->image_location = $path;
+        }
+        $item->save();
+        
+        return redirect(route('admin.item'));
     }
 
     /**
@@ -76,6 +129,13 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        //
+        Storage::delete($item->image_location);
+        $success = $item->delete();
+        if (!$success) {
+            Log::withContext([
+                'item' => $item,
+            ]);
+        }
+        return redirect(route('admin.item'));
     }
 }

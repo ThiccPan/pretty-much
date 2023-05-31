@@ -16,9 +16,8 @@ use Illuminate\Support\Facades\Route;
 */
 require __DIR__.'/auth.php';
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [ItemController::class, 'latest_3'])->name('user.home');
+Route::get('/item', [ItemController::class, 'user_item'])->name('user.item');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/dashboard', function () {
@@ -26,7 +25,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('admin.dashboard');
 
     Route::get('/admin/item', [ItemController::class, 'index'])->name('admin.item');
-    Route::post('/admin/item', [ItemController::class, 'store'])->name('admin.item');
+    Route::post('/admin/item', [ItemController::class, 'store'])->name('admin.item.create');
+    Route::put('/admin/item/{item}', [ItemController::class, 'update'])->name('admin.item.update');
+    Route::delete('/admin/item/{item}', [ItemController::class, 'destroy'])->name('admin.item.delete');
 });
 
 Route::middleware('auth')->group(function () {
