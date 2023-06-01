@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +21,11 @@ Route::get('/', [ItemController::class, 'latest_3'])->name('user.home');
 Route::get('/item', [ItemController::class, 'user_item'])->name('user.item');
 Route::get('/item/{item}', [ItemController::class, 'show'])->name('user.item.show');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function() {
+    Route::post('/cart', [CartController::class, 'update'])->name('user.cart');
+});
+
+Route::middleware(['auth', 'verified', 'is.admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
