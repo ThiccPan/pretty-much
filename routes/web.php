@@ -22,7 +22,8 @@ Route::get('/item', [ItemController::class, 'user_item'])->name('user.item');
 Route::get('/item/{item}', [ItemController::class, 'show'])->name('user.item.show');
 
 Route::middleware(['auth', 'verified'])->group(function() {
-    Route::post('/cart/{item}', [CartController::class, 'update'])->name('user.cart');
+    Route::get('/cart', [CartController::class, 'show'])->name('user.cart');
+    Route::post('/cart/{item}', [CartController::class, 'update'])->name('user.cart.add');
 });
 
 Route::middleware(['auth', 'verified', 'is.admin'])->group(function () {
