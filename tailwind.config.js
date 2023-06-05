@@ -17,6 +17,9 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
         },
+        minHeight: {
+            '1/2vh': '50vh',
+        }
     },
 
     plugins: [
