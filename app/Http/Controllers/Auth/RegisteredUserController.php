@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\cart;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -42,7 +43,17 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        if ($user->email == "admin@gmail.com") {
+            $user->is_admin = true;
+            $user->save();
+        }
+
         event(new Registered($user));
+
+        $cart = cart::create([
+            'user_id' => $user->id,
+            'total_price' => 0,
+        ]);
 
         Auth::login($user);
 
