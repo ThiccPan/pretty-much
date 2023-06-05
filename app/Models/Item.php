@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Item extends Model
 {
@@ -41,4 +42,9 @@ class Item extends Model
      * @var array<string, string>
      */
     protected $casts = [];
+
+    public function cart_items(): HasMany
+    {
+        return $this->hasMany(cart_item::class);
+    }
 }
