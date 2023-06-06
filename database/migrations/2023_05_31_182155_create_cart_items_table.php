@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('item_id')->references('id')->on('items');
             $table->timestamps();
             $table->integer('quantity');
-            $table->integer('total_price');
+            $table->decimal('total_price', $precision=10, $scale=2);
         });
     }
 
