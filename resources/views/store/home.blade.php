@@ -23,7 +23,7 @@
                 amet maxime provident ipsa ratione!</p>
             <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
                 <a href="#"
-                    class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-gray-500 hover:bg-grat-800 focus:ring-4 focus:ring-gray-300 dark:focus:ring-blue-900">
+                    class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-black hover:bg-grat-800 focus:ring-4 focus:ring-gray-300 dark:focus:ring-blue-900">
                     Start shopping
                     <svg aria-hidden="true" class="ml-2 -mr-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
