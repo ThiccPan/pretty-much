@@ -28,7 +28,7 @@
                                             src="{{ asset($cart_item->item->image_location) }}" alt="Neil image">
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                        <p class="text-md font-semibold text-gray-900 truncate dark:text-white">
                                             {{ $cart_item->item->name }}
                                         </p>
                                         <p class="text-sm text-gray-500 truncate dark:text-gray-400">
@@ -39,6 +39,20 @@
                                         class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
                                         Rp. {{ $cart_item->total_price }}
                                     </div>
+                                    <a href="{{ route('user.cart.item.delete', $cart_item->item_id) }}"
+                                        class="font-medium text-red-600 dark:text-blue-500 hover:underline"
+                                        onclick="event.preventDefault();
+                                        document.getElementById('delete-form-{{ $cart_item->item_id }}').submit();">
+                                        Delete
+                                    </a>
+
+                                    <form id="delete-form-{{ $cart_item->item_id }}"
+                                        action="{{ route('user.cart.item.delete', $cart_item->item_id) }}"
+                                        method="POST" style="display: none;">
+                                        @csrf
+                                        @method('delete')
+                                        <input type="hidden" name="cart_item_id" value="{{$cart_item->item_id}}">
+                                    </form>
                                 </div>
                             </li>
                         @endforeach
