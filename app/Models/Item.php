@@ -47,4 +47,9 @@ class Item extends Model
     {
         return $this->hasMany(cart_item::class);
     }
+
+    public function item_ratings(): HasMany
+    {
+        return $this->hasMany(Item_rating::class);
+    }
 }

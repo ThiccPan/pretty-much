@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('payment_method');
             $table->decimal("total_price", $precision=10, $scale=2);
-            $table->boolean('is_approved');
+            $table->string('status');
         });
     }
 
