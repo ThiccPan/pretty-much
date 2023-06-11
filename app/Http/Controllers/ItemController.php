@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\Item_rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -15,7 +16,7 @@ class ItemController extends Controller
      */
     public function latest_3()
     {
-        $itemsData = Item::paginate(3);
+        $itemsData = Item::paginate(3)->load('item_ratings');
         return view('store.home', [
             'items' => $itemsData
         ]);
@@ -32,23 +33,39 @@ class ItemController extends Controller
         ]);
     }
 
+    public function about()
+    {
+        return view('store.about');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function user_item()
     {
-        $itemsData = Item::all();
+        $itemsData = Item::all()->load('item_ratings');
+        // ddd($itemsData);
         return view('store.item', [
             'items' => $itemsData
         ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of the resource that match the filter input.
      */
-    public function create()
+    public function filtered(Request $request)
     {
-        //
+        $type = $request->query('type');
+        // ddd($type);
+        $filter = $request->query('query');
+        // ddd($filter);
+        $filter = "%" . $filter . "%";
+        $items = Item::where($type, "like", $filter)->get();
+        // ddd($items);
+        $items->load('item_ratings');
+        return view('store.item', [
+            'items' => $items,
+        ]);
     }
 
     /**
@@ -85,8 +102,27 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
+        $user = Auth::user();
+        $item->load('item_ratings');
+        $ave = $item->item_ratings()->avg('rating');
+        // ddd($ave);
+        $cart_item_qty = $user
+                    ->cart
+                    ->cart_items
+                    ->where("item_id", "=", $item->id)
+                    ->first();
+        if ($cart_item_qty == null) {
+            return view('store.item-detail', [
+                'item' => $item,
+                'in_cart_qty' => 0,
+                'ave' => $ave,
+            ]);
+        }
+        
         return view('store.item-detail', [
             'item' => $item,
+            'in_cart_qty' => $cart_item_qty->quantity,
+            'ave' => $ave,
         ]);
     }
 
@@ -95,7 +131,9 @@ class ItemController extends Controller
      */
     public function edit(Item $item)
     {
-        //
+        return view('admin.item-edit', [
+            'item' => $item,
+        ]);
     }
 
     /**
@@ -123,8 +161,8 @@ class ItemController extends Controller
             $item->image_location = $path;
         }
         $item->save();
-        
-        return redirect(route('admin.item'));
+
+        return back();
     }
 
     /**
@@ -140,5 +178,27 @@ class ItemController extends Controller
             ]);
         }
         return redirect(route('admin.item'));
+    }
+
+    public function add_review(Request $request, Item $item)
+    {
+        $rating = $request->get('rating');
+        if ($rating < 1 || $rating > 5) {
+            return back()->withErrors("invalid rating input");
+        }
+        $user = Auth::user();
+        Item_rating::updateOrInsert(
+            [
+                'user_id' => $user->id,
+                'item_id' => $item->id,
+            ],
+            [
+                'user_id' => $user->id,
+                'item_id' => $item->id,
+                'rating' => $rating,
+                'review' => $request->get('review'),
+            ]
+        );
+        return back();
     }
 }

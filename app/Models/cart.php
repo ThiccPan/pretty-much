@@ -37,4 +37,9 @@ class cart extends Model
     {
         return $this->hasMany(cart_item::class);
     }
+
+    public function reset_price (): void
+    {
+        $this->total_price = 0;
+    }
 }
