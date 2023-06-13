@@ -27,7 +27,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $itemsData = Item::all();
+        $itemsData = Item::paginate(8);
         return view('admin.item', [
             'items' => $itemsData
         ]);
@@ -43,7 +43,8 @@ class ItemController extends Controller
      */
     public function user_item()
     {
-        $itemsData = Item::all()->load('item_ratings');
+        $itemsData = Item::paginate(8);
+        // ddd($itemsData);
         // ddd($itemsData);
         return view('store.item', [
             'items' => $itemsData
@@ -60,7 +61,7 @@ class ItemController extends Controller
         $filter = $request->query('query');
         // ddd($filter);
         $filter = "%" . $filter . "%";
-        $items = Item::where($type, "like", $filter)->get();
+        $items = Item::where($type, "like", $filter)->paginate(8);
         // ddd($items);
         $items->load('item_ratings');
         return view('store.item', [
@@ -150,18 +151,11 @@ class ItemController extends Controller
 
         if ($request->hasFile('image')) {
             Storage::delete($item->image_location);
-            $success = $item->delete();
-            if (!$success) {
-                Log::withContext([
-                    'item' => $item,
-                ]);
-            }
-
             $path = $request->file('image')->storePublicly('item_image');
             $item->image_location = $path;
         }
-        $item->save();
 
+        $item->save();
         return back();
     }
 
