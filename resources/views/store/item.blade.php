@@ -44,6 +44,7 @@
             @endforeach
         </div>
 
+        {{ $items->links() }}
     </div>
     @include('store.component.footer')
 </body>
